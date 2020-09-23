@@ -6,6 +6,7 @@ import UsersController from '../app/controllers/UsersController';
 import Users from '../app/models/Users';
 import ensureAuthenticated from '../middleawares/ensureAuthenticated'
 import uploadConfig from '../config/upload';
+import AvatarUsersController from '../app/controllers/AvatarUsersController';
 
 const usersRouter = Router();
 const upload = multer(uploadConfig);
@@ -51,7 +52,17 @@ usersRouter.delete('/:id', async (req, res) => {
 });
 
 usersRouter.patch('/avatar',upload.single('avatar'), async (request, response) => {
-  console.log(request.file);
-  response.json({ ok: true });
+  try{
+    const avatarUsersController = new AvatarUsersController();
+    await avatarUsersController.update({
+      user_id: request.user.id,
+      avatarFileName: request.file.filename
+    })
+    console.log(request.file);
+    response.json({ ok: true });
+  } catch (err) {
+    return response.status(400).json({ error: err.message })
+  }
+
 });
 export default usersRouter;
