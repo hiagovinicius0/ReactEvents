@@ -16,4 +16,14 @@ eventsRouter.post('/', async (req, res) => {
     return res.json(event);
 })
 
+eventsRouter.post('/likes', async (req, res) => {
+    const { user_id, event_id } = req.body;
+    const eventsController = new EventsController()
+    const event = await eventsController.likes({
+        user_id,
+        event_id
+    });
+    return res.json(event);
+})
+
 export default eventsRouter;
