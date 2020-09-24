@@ -54,12 +54,12 @@ usersRouter.delete('/:id', async (req, res) => {
 usersRouter.patch('/avatar',upload.single('avatar'), async (request, response) => {
   try{
     const avatarUsersController = new AvatarUsersController();
-    await avatarUsersController.update({
+    const user = await avatarUsersController.update({
       user_id: request.user.id,
-      avatarFileName: request.file.filename
-    })
-    console.log(request.file);
-    response.json({ ok: true });
+      avatarFileName: request.file.filename,
+    });
+    delete user.password;
+    response.json(user);
   } catch (err) {
     return response.status(400).json({ error: err.message })
   }

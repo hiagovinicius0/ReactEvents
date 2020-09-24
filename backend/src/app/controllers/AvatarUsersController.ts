@@ -1,4 +1,9 @@
-import { updateArrayBindingPattern } from "typescript";
+import { getRepository } from 'typeorm';
+import path from 'path';
+import fs from 'fs';
+import Users from '../models/Users';
+import uploadConfig from '../../config/upload';
+import { fstat } from 'fs';
 
 interface Request {
     user_id: string;
@@ -6,8 +11,22 @@ interface Request {
 }
 
 class AvatarUsersController {
-    public async update({ user_id, avatarFileName}: Request): Promise<void> {
-
+    public async update({ user_id, avatarFileName}: Request): Promise<Users> {
+        const usersRepository = getRepository(Users);
+        const user = await usersRepository.findOne(user_id);
+        if (!user){
+            throw Error('Somente usuários autenticados podem alterar o avatar');
+        }
+        if (user.avatar) {
+            const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
+            const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
+            if (userAvatarFileExists) {
+                await fs.promises.unlink(userAvatarFilePath);
+            }
+        }
+        user.avatar = avatarFileName;
+        await usersRepository.save(user);
+        return user;
     }
 }
 
