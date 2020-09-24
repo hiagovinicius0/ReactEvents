@@ -12,20 +12,16 @@ const usersRouter = Router();
 const upload = multer(uploadConfig);
 
 usersRouter.post('/', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const usersController = new UsersController();
+  const { name, email, password } = req.body;
+  const usersController = new UsersController();
 
-    const user = await usersController.store({
-      name,
-      email,
-      password,
-    });
-    delete user.password;
-    return res.json(user);
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
+  const user = await usersController.store({
+    name,
+    email,
+    password,
+  });
+  delete user.password;
+  return res.json(user);
 });
 usersRouter.use(ensureAuthenticated);
 usersRouter.get('/', async (req, res) => {
@@ -52,17 +48,12 @@ usersRouter.delete('/:id', async (req, res) => {
 });
 
 usersRouter.patch('/avatar',upload.single('avatar'), async (request, response) => {
-  try{
-    const avatarUsersController = new AvatarUsersController();
-    const user = await avatarUsersController.update({
-      user_id: request.user.id,
-      avatarFileName: request.file.filename,
-    });
-    delete user.password;
-    response.json(user);
-  } catch (err) {
-    return response.status(400).json({ error: err.message })
-  }
-
+  const avatarUsersController = new AvatarUsersController();
+  const user = await avatarUsersController.update({
+    user_id: request.user.id,
+    avatarFileName: request.file.filename,
+  });
+  delete user.password;
+  response.json(user);
 });
 export default usersRouter;

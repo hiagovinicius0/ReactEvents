@@ -5,18 +5,14 @@ import SessionsUsersController from '../app/controllers/SessionsUsersController'
 const sessionsRouter = Router();
 
 sessionsRouter.post('/', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const sessionsUsersController = new SessionsUsersController();
-    const { user, token } = await sessionsUsersController.store({
-        email,
-        password
-    })
-    delete user.password;
-    return res.json({ user, token });
-  } catch (err) {
-    return res.status(400).json({ error: err.message });
-  }
+  const { email, password } = req.body;
+  const sessionsUsersController = new SessionsUsersController();
+  const { user, token } = await sessionsUsersController.store({
+      email,
+      password
+  })
+  delete user.password;
+  return res.json({ user, token });
 });
 
 export default sessionsRouter;

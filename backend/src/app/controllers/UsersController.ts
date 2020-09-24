@@ -1,6 +1,6 @@
 import { getRepository } from 'typeorm';
 import Users from '../models/Users';
-
+import AppError from '../../errors/AppError';
 import { hash } from 'bcryptjs';
 
 interface Request {
@@ -17,7 +17,7 @@ class UsersController {
     });
 
     if (UserAlreadyExist) {
-      throw new Error('Endereço de E-mail já cadastrado!');
+      throw new AppError('Endereço de E-mail já cadastrado!', 401);
     }
 
     const hashPassword = await hash(password, 8);

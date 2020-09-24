@@ -4,6 +4,7 @@ import fs from 'fs';
 import Users from '../models/Users';
 import uploadConfig from '../../config/upload';
 import { fstat } from 'fs';
+import AppError from '../../errors/AppError';
 
 interface Request {
     user_id: string;
@@ -15,7 +16,7 @@ class AvatarUsersController {
         const usersRepository = getRepository(Users);
         const user = await usersRepository.findOne(user_id);
         if (!user){
-            throw Error('Somente usuários autenticados podem alterar o avatar');
+            throw new AppError('Somente usuários autenticados podem alterar o avatar', 401);
         }
         if (user.avatar) {
             const userAvatarFilePath = path.join(uploadConfig.directory, user.avatar);
