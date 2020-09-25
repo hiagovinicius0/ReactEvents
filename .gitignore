@@ -1,3 +1,5 @@
 backend/node_modules/*
 backend/tmp/*
 backend/!tmp/.gitkeep
+backend/events/*
+backend/!events/.gitkeep

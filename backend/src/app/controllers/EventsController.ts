@@ -1,6 +1,10 @@
 import { getRepository } from 'typeorm';
 import Events from '../models/Events';
 import Likes from '../models/Likes';
+import AppError from '../../errors/AppError';
+import path from 'path';
+import fs from 'fs';
+import uploadConfig from '../../config/uploadPhotoEvent';
 
 interface Request {
     name: string;
@@ -19,6 +23,11 @@ interface responseLike{
 interface RequestLikes {
     user_id: string;
     event_id: string;
+}
+
+interface RequestPhoto {
+    event_id: string;
+    photoFileName: string;
 }
 class EventsController {
     public async store({ name, local, remark, author, date_event }: Request): Promise<Events> {
@@ -56,6 +65,23 @@ class EventsController {
                 like: false 
             };
         }
+    }
+    public async updatePhoto({ event_id, photoFileName}: RequestPhoto): Promise<Events> {
+        const eventsRepository = getRepository(Events);
+        const event = await eventsRepository.findOne(event_id);
+        if (!event){
+            throw new AppError('Evento não encontrado', 401);
+        }
+        if (event.photo) {
+            const photoFilePath = path.join(uploadConfig.directory, event.photo);
+            const photoFileExists = await fs.promises.stat(photoFilePath);
+            if (photoFileExists) {
+                await fs.promises.unlink(photoFilePath);
+            }
+        }
+        event.photo = photoFileName;
+        await eventsRepository.save(event);
+        return event;
     }
 }
 

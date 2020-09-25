@@ -20,6 +20,9 @@ class Events {
   local: string;
 
   @Column()
+  photo: string;
+
+  @Column()
   remark: string;
 
   @Column()
