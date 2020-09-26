@@ -11,7 +11,7 @@ import ensureAuthenticated from '../middleawares/ensureAuthenticated'
 import auth from '../config/auth';
 
 eventsRouter.use(ensureAuthenticated);
-eventsRouter.post('/', async (req, res) => {
+eventsRouter.post('/', upload.single('photo'), async (req, res) => {
     const { name, local, remark, author, date_event} = req.body;
     const eventsController = new EventsController()
     const event = await eventsController.store({
@@ -19,7 +19,23 @@ eventsRouter.post('/', async (req, res) => {
         local,
         remark,
         author,
-        date_event
+        date_event,
+        photoFileName: req.file.filename,
+    });
+    return res.json(event);
+})
+
+eventsRouter.put('/:id', upload.single('photo'), async (req, res) => {
+    const { id } = req.params;
+    const { name, local, remark, date_event } = req.body;
+    const eventsController = new EventsController()
+    const event = await eventsController.update({
+        name,
+        local,
+        remark,
+        date_event,
+        photoFileName: req.file.filename,
+        id
     });
     return res.json(event);
 })
@@ -33,15 +49,6 @@ eventsRouter.post('/likes', async (req, res) => {
     });
     return res.json(event);
 })
-
-eventsRouter.patch('/imageEvent', upload.single('photo'), async (request, response) => {
-    const eventsController = new EventsController();
-    const user = await eventsController.updatePhoto({
-        event_id: request.body.event_id,
-        photoFileName: request.file.filename,
-    });
-    response.json(user);
-});
 
 eventsRouter.get('/', async (req, res) => {
     const eventsRepository = getRepository(Events);
