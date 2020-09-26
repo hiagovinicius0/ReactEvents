@@ -26,16 +26,14 @@ usersRouter.post('/', async (req, res) => {
 usersRouter.use(ensureAuthenticated);
 usersRouter.get('/', async (req, res) => {
   const userRepository = getRepository(Users);
-  const user = await userRepository.find();
-  console.log(req.user);
-  delete user[0].password;
+  const user = await userRepository.find({ select: [ "id", "name", "email", "avatar" ]});
   return res.json(user);
 });
 
 usersRouter.get('/:id', async (req, res) => {
   const userRepository = getRepository(Users);
   const { id } = req.params;
-  const user = await userRepository.findOne(id);
+  const user = await userRepository.findOne(id, { select: [ "id", "name", "email", "avatar" ]});
   delete user?.password;
   return res.json(user);
 });
@@ -53,7 +51,6 @@ usersRouter.patch('/avatar',upload.single('avatar'), async (request, response) =
     user_id: request.user.id,
     avatarFileName: request.file.filename,
   });
-  delete user.password;
-  response.json(user);
+  response.json({avatar: user.avatar});
 });
 export default usersRouter;
