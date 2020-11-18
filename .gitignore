@@ -3,3 +3,5 @@ backend/tmp/*
 backend/!tmp/.gitkeep
 backend/events/*
 backend/!events/.gitkeep
+backend/yarn.lock
+frontend/yarn.lock
