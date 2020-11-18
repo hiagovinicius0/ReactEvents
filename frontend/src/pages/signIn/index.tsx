@@ -40,7 +40,7 @@ const SignIn: React.FC = () => {
                     <Button type="submit">Cadastrar</Button>
                     <a href="forgot">Esqueci minha senha</a>
                 </Form>
-                <a href="login">
+                <a href="signIn">
                     <FiArrowLeft />
                     Criar conta
                 </a>
