@@ -1,4 +1,5 @@
 import express, { request, response } from 'express';
+import cors from 'cors';
 import 'express-async-errors';
 import routes from './routes';
 import uploadConfig from './config/upload';
@@ -9,6 +10,7 @@ import { nextTick } from 'process';
 import { NextFunction, Request } from 'express-serve-static-core';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use('/files', express.static(uploadConfig.directory));
 app.use('/eventPhoto', express.static(uploadConfigEvent.directory));
